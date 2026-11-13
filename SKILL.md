@@ -54,7 +54,7 @@ description: 用一位作家的「眼睛」把照片写成「主旨（3–7 字�
 
 ### 第 2 步　细读图
 
-用 read_image 读原图（多张逐张看；模型无视觉时改用 modlens_read_image）。按 `references/reading.md` 五步：
+用你的 agent 自带的读图方式看原图（DSH 用 `read_image`；Claude Code 这类直接把图片放进上下文；多张逐张看）。模型没有视觉时，先用本地 OCR／图像理解工具把画面转成文字（如 `modlens_read_image`，可选，不是依赖）。按 `references/reading.md` 五步：
 
 1. 形式：构图、景别、光线、色彩、时间天气
 2. 内容：主体、人、环境线索、**最不合常理的一处**
