@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// 字数与节奏校验：主旨 3–7 字、题记 ≤99 字（标点不计），题记 1–3 句。
+// 字数与节奏校验：主旨 3–7 字、题记 ≤99 字（标点不计），题记 1–5 行、1–5 句，一行最多两句。
 // 用法：node check_caption.mjs "<主旨>" "<题记>" [--strict]
 // 判定分三级：
 //   FAIL 硬规则，必须改；
@@ -35,8 +35,12 @@ if (inscription) {
 
   if (n > 99) { pass = false; problems.push(`题记 ${n}/99 字`); }
   else lines.push(`PASS 题记: ${n}/99 字；${arr.length} 行 / ${sentences} 句`);
-  if (arr.length < 1 || arr.length > 3) { pass = false; problems.push(`题记 ${arr.length} 行（应为 1–3 行）`); }
-  if (sentences < 1 || sentences > 3) { pass = false; problems.push(`题记 ${sentences} 句（应为 1–3 句）`); }
+  if (arr.length < 1 || arr.length > 5) { pass = false; problems.push(`题记 ${arr.length} 行（应为 1–5 行）`); }
+  if (sentences < 1 || sentences > 5) { pass = false; problems.push(`题记 ${sentences} 句（应为 1–5 句）`); }
+  for (const [i, l] of arr.entries()) {
+    const per = (l.match(/[。！？!?]/g) || []).length;
+    if (per > 2) warnings.push(`第 ${i + 1} 行有 ${per} 句，一行最多两句`);
+  }
 
   const lastLine = arr[arr.length - 1] || "";
   const lastChars = count(lastLine);
@@ -55,8 +59,8 @@ if (inscription) {
   if (inscription.includes(title)) warnings.push("题记里出现主旨原文，重复了");
 
   // TIP：节奏提示，随作家尺子变，不判错
-  if (arr.length === 3 && Math.max(...chars) - Math.min(...chars) < 10) {
-    tips.push(`三行长度极差 ${Math.max(...chars) - Math.min(...chars)} < 10，节奏偏匀（长句作家可不管）`);
+  if (arr.length >= 3 && Math.max(...chars) - Math.min(...chars) < 10) {
+    tips.push(`各行长度极差 ${Math.max(...chars) - Math.min(...chars)} < 10，节奏偏匀（长句作家可不管）`);
   }
   if (Math.min(...chars) > 8) tips.push("没有一句 ≤8 字（长句作家正常；短句作家要查）");
   if (lastChars > 12) tips.push(`末句 ${lastChars} 字偏长（村上 28 字也合法，看尺子）`);
